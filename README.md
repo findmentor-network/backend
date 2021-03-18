@@ -1,3 +1,4 @@
+[![Go](https://github.com/findmentor-network/backend/actions/workflows/go.yml/badge.svg)](https://github.com/findmentor-network/backend/actions/workflows/go.yml)
 
 ## Build Setup
 

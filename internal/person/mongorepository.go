@@ -41,7 +41,7 @@ func (m mongoRepository) Get(ctx context.Context, pg *pagination.Pages) (result 
 		var elem *Person
 		err = c.Decode(&elem)
 		if err != nil {
-			log.Logger.Error("failed to get cursor. %s", err.Error())
+			log.Logger.Errorf("failed to get cursor. %s", err.Error())
 		} else {
 			result = append(result, elem)
 		}

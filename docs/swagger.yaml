@@ -1,0 +1,98 @@
+basePath: /api
+definitions:
+  person.Contribution:
+    properties:
+      contributions:
+        items:
+          properties:
+            avatar:
+              type: string
+            fmn_url:
+              type: string
+            github_address:
+              type: string
+            username:
+              type: string
+          type: object
+        type: array
+      goal:
+        type: string
+      mentor:
+        type: string
+      project_adress:
+        type: string
+      slug:
+        type: string
+    type: object
+  person.Person:
+    properties:
+      avatar:
+        type: string
+      contributors:
+        items:
+          $ref: '#/definitions/person.Contribution'
+        type: array
+      displayInterests:
+        type: string
+      github:
+        type: string
+      goals:
+        type: string
+      interests:
+        type: string
+      isHireable:
+        type: boolean
+      linkedin:
+        type: string
+      mentor:
+        type: string
+      mentorships:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      registered_at:
+        type: string
+      slug:
+        type: string
+      twitter_handle:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Find Mentor API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Find Mentor API
+  version: "1.0"
+paths:
+  /api/v1/:
+    get:
+      consumes:
+      - application/json
+      description: Get Persons
+      parameters:
+      - description: Page
+        in: path
+        name: page
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/person.Person'
+        "400":
+          description: Bad Request
+          schema:
+            type: id
+      summary: Get Persons
+      tags:
+      - Person
+schemes:
+- http
+swagger: "2.0"

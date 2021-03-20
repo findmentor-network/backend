@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/findmentor-network/backend/pkg/errors"
 	"github.com/findmentor-network/backend/pkg/log"
+	mongohelper "github.com/findmentor-network/backend/pkg/mongoextentions"
 	"github.com/findmentor-network/backend/pkg/pagination"
 	. "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +23,7 @@ func NewRepository(database *mongo.Database) Repository {
 		db: database.Collection(collectionName),
 	}
 }
-func (m mongoRepository) Get(ctx context.Context, pg *pagination.Pages) (result []*Person, err error) {
+func (m mongoRepository) Get(ctx context.Context, query *mongohelper.Query, pg *pagination.Pages) (result []*Person, err error) {
 
 	batchSize := int32(pg.PerPage)
 	skip := int64(pg.Offset())
@@ -32,8 +33,16 @@ func (m mongoRepository) Get(ctx context.Context, pg *pagination.Pages) (result 
 		Limit:     &limit,
 		Skip:      &skip,
 	}
-	c, err := m.db.Find(ctx, M{}, opt)
-	//todo:better error handling
+	if len(pg.Sort) > 0 {
+		intSortBy := 1
+		if pg.SortBy == "desc" {
+			intSortBy = -1
+		}
+		opt.SetSort(D{{pg.Sort, intSortBy}})
+	}
+
+	c, err := m.db.Find(ctx, query.Build(), opt)
+
 	if err != nil {
 		return nil, errors.New(DatabaseError, err.Error())
 	}

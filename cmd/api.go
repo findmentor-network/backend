@@ -7,6 +7,7 @@ import (
 	"github.com/findmentor-network/backend/internal/person"
 	"github.com/findmentor-network/backend/internal/person/controller"
 	"github.com/findmentor-network/backend/pkg/echoextention"
+	"github.com/findmentor-network/backend/pkg/errors"
 	"github.com/findmentor-network/backend/pkg/log"
 	mongohelper "github.com/findmentor-network/backend/pkg/mongoextentions"
 	"github.com/labstack/echo/v4"
@@ -32,6 +33,7 @@ func init() {
 	port := "5000"
 	dbconn := "mongodb://root:example@127.0.0.1:27017/"
 	dbName := "findmentor"
+	enableDebug := false
 	rootCmd.AddCommand(apiCmd)
 	rootCmd.Flags().StringVarP(&port, "port", "p", port, "service port")
 	rootCmd.Flags().StringVarP(&dbconn, "dbconn", "c", dbconn, "Database connection string")
@@ -40,10 +42,14 @@ func init() {
 	apiCmd.RunE = func(cmd *cobra.Command, args []string) error {
 
 		instance := echo.New()
-		instance.HideBanner = true
-		instance.HidePort = true
+		instance.HideBanner = !enableDebug
+		instance.HidePort = !enableDebug
+		instance.Debug = enableDebug
 		instance.Logger = log.SetupLogger()
-		echoextention.RegisterGlobalMiddlewares(instance)
+		echoextention.RegisterGlobalMiddlewares(instance, func() errors.StatusCodeList {
+			codes := person.StatusCodes
+			return codes
+		})
 
 		mongoDb, err := mongohelper.NewDatabase(dbconn, dbName)
 		if err != nil {

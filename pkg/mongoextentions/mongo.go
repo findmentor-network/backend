@@ -4,8 +4,6 @@ import (
 	"context"
 	"github.com/findmentor-network/backend/pkg/log"
 	"github.com/pkg/errors"
-
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -40,22 +38,4 @@ func NewDatabase(uri, databaseName string) (db *mongo.Database, err error) {
 	db = client.Database(databaseName)
 
 	return db, err
-}
-func BuildQuery(params map[string]string) (query bson.M) {
-
-	query = bson.M{}
-	for field, value := range params {
-
-		if len(value) == 0 {
-			continue
-		}
-		//if field == "_id" {
-		//	objectIDS, _ := primitive.ObjectIDFromHex(value)
-		//	query["_id"] = objectIDS
-		//} else
-		{
-			query[field] = value
-		}
-	}
-	return query
 }

@@ -1,16 +1,19 @@
 package echoextention
 
 import (
-	"github.com/findmentor-network/backend/internal/person"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoLog "github.com/labstack/gommon/log"
 	"strings"
 )
 
-func RegisterGlobalMiddlewares(e *echo.Echo) {
+func RegisterGlobalMiddlewares(e *echo.Echo, f GetStatusCodeFunc) {
 
 	e.Use(middleware.BodyLimit("1M"))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"https://findmentor.network"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		Skipper: Myskipper,
 		Level:   -1,
@@ -26,7 +29,7 @@ func RegisterGlobalMiddlewares(e *echo.Echo) {
 		DisableStackAll:   false,
 		DisablePrintStack: false,
 		LogLevel:          echoLog.INFO,
-		statusCodeMapping: person.StatusCodes,
+		statusCodeMapping: f(),
 	}))
 }
 

@@ -35,7 +35,7 @@ func TestNew(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		p := New(test.page, test.perPage, test.total)
+		p := New(test.page, test.perPage, test.total, "", "")
 
 		fmt.Printf("%+v\n", p)
 		assert.Equal(t, test.expectedPage, p.Page, test.tag)

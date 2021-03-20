@@ -18,6 +18,10 @@ build:  ## build the cli binary
 test:  ## testing the cli binary
 	go test -json -covermode=atomic -coverpkg=../../backend/...  ./...
 
+.PHONY: c
+c:  ## testing the cli binary
+	curl -v http://localhost:5000/api/v1/persons/filter?mentor=Mentee&isHireable=true&sort=contributions&sortBy=asc
+
 .PHONY: run
 run: ## run the cli
 	go run ${LDFLAGS} . api

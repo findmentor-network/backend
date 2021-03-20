@@ -29,9 +29,9 @@ var DefaultRecoverConfig = RecoverConfig{
 }
 
 type (
-	Skipper func(echo.Context) bool
-
-	RecoverConfig struct {
+	Skipper           func(echo.Context) bool
+	GetStatusCodeFunc func() errors.StatusCodeList
+	RecoverConfig     struct {
 		Skipper           Skipper
 		StackSize         int  `yaml:"stack_size"`
 		DisableStackAll   bool `yaml:"disable_stack_all"`

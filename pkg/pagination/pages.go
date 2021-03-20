@@ -14,6 +14,10 @@ var (
 	PageVar = "page"
 	// PageSizeVar specifies the query parameter name for page size
 	PageSizeVar = "size"
+
+	Sort = "sort"
+
+	SortBy = "sortBy"
 )
 
 // Pages represents a paginated list of data items.
@@ -23,6 +27,8 @@ type Pages struct {
 	PageCount  int         `json:"page_count"`
 	TotalCount int         `json:"total_count"`
 	Items      interface{} `json:"items"`
+	Sort       string      `json:sort`
+	SortBy     string      `json:sortBy`
 }
 
 // New creates a new Pages instance.
@@ -30,7 +36,7 @@ type Pages struct {
 // The perPage parameter refers to the number of items on each page.
 // And the total parameter specifies the total number of data items.
 // If total is less than 0, it means total is unknown.
-func New(page, perPage, total int) *Pages {
+func New(page, perPage, total int, sort, sortBy string) *Pages {
 	if perPage <= 0 {
 		perPage = DefaultPageSize
 	}
@@ -47,12 +53,16 @@ func New(page, perPage, total int) *Pages {
 	if page < 1 {
 		page = 1
 	}
-
+	if len(sort) > 0 && len(sortBy) == 0 {
+		sortBy = "asc"
+	}
 	return &Pages{
 		Page:       page,
 		PerPage:    perPage,
-		TotalCount: total,
 		PageCount:  pageCount,
+		TotalCount: total,
+		Sort:       sort,
+		SortBy:     sortBy,
 	}
 }
 
@@ -61,7 +71,10 @@ func New(page, perPage, total int) *Pages {
 func NewFromRequest(req *http.Request, count int) *Pages {
 	page := parseInt(req.URL.Query().Get(PageVar), 1)
 	perPage := parseInt(req.URL.Query().Get(PageSizeVar), DefaultPageSize)
-	return New(page, perPage, count)
+
+	sort := req.URL.Query().Get(Sort)
+	sortBy := req.URL.Query().Get(SortBy)
+	return New(page, perPage, count, sort, sortBy)
 }
 
 // parseInt parses a string into an integer. If parsing is failed, defaultValue will be returned.

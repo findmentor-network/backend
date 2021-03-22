@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/findmentor-network/backend/internal/person"
 	mongohelper "github.com/findmentor-network/backend/pkg/mongoextentions"
 	"github.com/findmentor-network/backend/pkg/pagination"
@@ -21,8 +22,8 @@ func NewHandlers(instance *echo.Echo, r *Controller) {
 
 	grp := instance.Group("/api/v1/")
 	grp.GET("persons", r.Get)
+	grp.GET("persons/peer/:slug", r.GetBySlug)
 	grp.GET("persons/filter", r.Get)
-
 }
 
 // @Summary Get Persons
@@ -52,4 +53,19 @@ func (r Controller) Get(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, items)
+}
+
+func (r Controller) GetBySlug(c echo.Context) error {
+
+	slug := c.Param("slug")
+	if len(slug)==0{
+		return c.JSON(http.StatusInternalServerError,fmt.Sprintf("slug can not be null or empty"))
+	}
+	query := mongohelper.QueryOf()
+	query.Add("slug",slug)
+	person,err := r.repository.Get(c.Request().Context(),query,nil)
+	if err != nil {
+		panic(err)
+	}
+	return c.JSON(http.StatusOK,person)
 }

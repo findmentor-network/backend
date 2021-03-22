@@ -25,15 +25,14 @@ func NewRepository(database *mongo.Database) Repository {
 }
 func (m mongoRepository) Get(ctx context.Context, query *mongohelper.Query, pg *pagination.Pages) (result []*Person, err error) {
 
-	batchSize := int32(pg.PerPage)
-	skip := int64(pg.Offset())
-	limit := int64(pg.Limit())
-	opt := &options.FindOptions{
-		BatchSize: &batchSize,
-		Limit:     &limit,
-		Skip:      &skip,
+	opt := &options.FindOptions{}
+	if pg!=nil{
+
+		opt.SetBatchSize(int32(pg.PerPage))
+		opt.SetSkip(int64(pg.Offset()))
+		opt.SetLimit(int64(pg.Limit()))
 	}
-	if len(pg.Sort) > 0 {
+	if pg!=nil && len(pg.Sort) > 0 {
 		intSortBy := 1
 		if pg.SortBy == "desc" {
 			intSortBy = -1

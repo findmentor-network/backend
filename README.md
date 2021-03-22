@@ -42,3 +42,7 @@ http://127.0.0.1:5000/swagger/index.html
 
 ## TODO
 1. need to port generate.js to golang as command
+1. crud operation for person
+1. search (slug,interest,name)
+1. profile page
+1. admin pages

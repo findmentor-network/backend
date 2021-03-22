@@ -51,7 +51,7 @@ func Test_resource_GetAll(usecase *testing.T) {
 				if err := controller.Get(ctx); err == nil {
 					assert.NotNil(t, rec.Body.String())
 				}
-				t.Logf("Result:%s", rec.Body.String())
+				t.Logf("Result:%s, %d", rec.Body.String(),rec.Result().StatusCode)
 				assert.Equal(t, tt.wantStatusCode, rec.Code)
 			})
 		}

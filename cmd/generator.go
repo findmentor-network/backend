@@ -1,14 +1,9 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/findmentor-network/backend/internal/generate"
-	"github.com/findmentor-network/backend/internal/generate/parsers"
 	"github.com/spf13/cobra"
-	"io/ioutil"
-	"log"
-	"net/http"
 )
 
 var generatorCmd = &cobra.Command{
@@ -36,30 +31,17 @@ func generateUrl(spreadsheetId, apiKey string) string {
 	return fmt.Sprint("https://sheets.googleapis.com/v4/spreadsheets/", spreadsheetId, "/values:batchGet?key=", apiKey, "&fields=valueRanges(range,values)&ranges=Mentees&ranges=Aktif%20Mentorluklar&ranges=Jobs&ranges=Interns")
 }
 
-func process(url string) parsers.Bundle {
-	res, err := getData(url)
+func process(url string) generate.Bundle {
+	res, err := generate.GetData(url)
 	if err != nil {
 		panic("failed getting data from google sheets")
 	}
 
 	// parsing
-	bundle := parsers.ParseBundle(&res)
+	bundle := generate.ParseBundle(&res)
 
 	// post process
 	bundle.AggregateMentorships()
 
 	return bundle
-}
-
-func getData(url string) (gs generate.GoogleSheetResponse, err error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = json.Unmarshal(body, &gs)
-	return
 }

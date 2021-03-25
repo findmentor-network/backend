@@ -1,9 +1,26 @@
-package parsers
+package generate
 
 import (
+	"encoding/json"
 	"github.com/gosimple/slug"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"sync"
 )
+
+func GetData(url string) (gs GoogleSheetResponse, err error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = json.Unmarshal(body, &gs)
+	return
+}
 
 func ParseBundle(raw RawDataBundle) (b Bundle) {
 	ch := sync.WaitGroup{}

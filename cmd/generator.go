@@ -2,16 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"github.com/findmentor-network/backend/internal/generate"
-	"github.com/findmentor-network/backend/internal/generate/parsers"
-	"github.com/spf13/cobra"
-	"io/ioutil"
-	"log"
-	"net/http"
-)
-
-import (
-	"encoding/json"
 	"fmt"
 	"github.com/findmentor-network/backend/internal/generate"
 	"github.com/findmentor-network/backend/internal/generate/parsers"
